@@ -1,88 +1,131 @@
-# Maquina Agricola
-Projeto Fase 3 - FIAP
+# Sistema de Irrigação Inteligente com ESP32  
+### Projeto Fase 3 – FarmTech Solutions | FIAP
 
-# FarmTech Solutions - Sistema de Sensores e Controle com ESP32
-FIAP - Faculdade de Informática e Administração Paulista
+Este projeto simula um sistema de irrigação automatizado utilizando o microcontrolador ESP32, sensores físicos (ou simulados) e lógica de controle embarcada. Desenvolvido no simulador Wokwi, o sistema integra leitura de sensores, acionamento de bomba via relé e visualização de dados em um display OLED.
 
-![Sistema de Sensores e Controle com ESP32](https://github.com/user-attachments/assets/467974e1-2cd2-4a9a-a01a-2c7861282489)
+Além disso, os dados dos sensores são enviados via HTTP a um backend Python que registra as informações em um banco SQL e permite visualização futura via dashboard. A lógica permite controle automático da irrigação com base na umidade do solo e também controle **manual** em caso de **previsão de chuva**, com base em dados de uma **API climática**.
 
-## Grupo 58
+---
 
-### Integrantes:
-* Felipe Sabino da Silva
-* Juan Felipe Voltolini
-* Luiz Henrique Ribeiro de Oliveira
-* Marco Aurélio Eberhardt Assimpção
-* Paulo Henrique Senise
+## Índice
 
-## Professores:
-### Tutor(a)
-* Leonardo Ruiz Orabona
+- [ Grupo](#-grupo)
+- [ Visão Geral](#-visão-geral-do-projeto)
+- [ Circuito Wokwi](#-circuito-wokwi)
+- [ Componentes](#-componentes-utilizados)
+- [ Conexões](#-conexões)
+- [ Lógica de Controle](#-lógica-de-controle-da-bomba-de-irrigação)
+- [ Código](#-código-cc)
 
-### Coordenador(a)
-* André Godoi
+---
+
+## Grupo
+
+**Grupo 58 – FIAP**  
+*Integrantes:*
+- Felipe Sabino da Silva  
+- Juan Felipe Voltolini  
+- Luiz Henrique Ribeiro de Oliveira  
+- Marco Aurélio Eberhardt Assimpção  
+- **Paulo Henrique Senise**  
+
+*Professores:*  
+- Tutor: Leonardo Ruiz Orabona  
+- Coordenador: André Godoi
+
+---
 
 ## Visão Geral do Projeto
 
-Este projeto simula um sistema de irrigação inteligente para a FarmTech Solutions, utilizando um ESP32 e sensores simulados na plataforma Wokwi. O sistema coleta dados de umidade do solo, simula leituras de pH e níveis de nutrientes (Fósforo e Potássio) e controla automaticamente uma bomba de irrigação com base na umidade do solo. Adicionalmente, o sistema permite o controle manual da irrigação pelo usuário, seguindo as indicações de alerta de chuva fornecidas pelo dashboard com base nas previsões climáticas.
+O sistema realiza:
+- Leitura da **umidade do solo**, **pH**, **fósforo** e **potássio**.
+- Acionamento automático da bomba quando a umidade está abaixo do ideal.
+- Controle manual da irrigação por botão físico em caso de previsão de chuva.
+- Exibição local dos dados no **display OLED**.
+- Envio dos dados via **HTTP GET** para armazenamento em banco SQL.
 
-Para facilitar o acompanhamento local, um display OLED conectado ao circuito no Wokwi exibe as grandezas físicas coletadas pelo ESP32. Os dados também são visualizados em tempo real através de um dashboard, apresentado em formato de tabelas, gráficos, condições climáticas e previsões de chuva, auxiliando na análise e tomada de decisão sobre a irrigação.
+---
 
 ## Circuito Wokwi
-* Circuito montado no simulador wokwi e funcionando.
-![{4217235E-FFF3-487A-9F3B-5A85030145D6}](https://github.com/user-attachments/assets/0997e5f3-63be-4ba2-af87-7304838a6367)
-* O sensor LDR sendo variado para simular a lógica do pH (ver display Oled).
-![{11348D9C-31EB-4D85-A726-8CF698791E9B}](https://github.com/user-attachments/assets/c918b9b5-cff2-4a4b-98a4-f91859953572)
-* O sensor DHT22 sendo variado para simular a lógica de temperatura e umidade (ver display Oled).
-![{3C9E2132-2E48-4ED4-B1AD-1586886FEC2A}](https://github.com/user-attachments/assets/73d38647-ca94-4695-a5a5-ecff9594e71f)
-* O botão azul apertado simulando o sensor de Potássio (k) = true (ver display Oled).
-![{EE6152C4-0433-4732-9D7F-F61FCD4C71C7}](https://github.com/user-attachments/assets/f2897d8a-19a8-4ecf-a9e3-49c5c1c81269)
-* O botão amarelo apertado simulando o sensor de Fósforo (P) = true (ver display Oled).
-![{087AB5C3-B1CC-4D57-AD6C-0937B0CE704E}](https://github.com/user-attachments/assets/ce4708d8-ca46-44ff-8daf-0b808e03fd51)
-* Umidade abaixo de 40% e a bomba estava ligada (led simulando a bomba) ao pressionar o botão a bomba (led) desligou (ver display Oled).
-![{EACDDBA9-F1CD-4CC6-8ED0-3A8B912DABF7}](https://github.com/user-attachments/assets/d0341cae-5fb9-4de8-9547-e2fb6e5e3c51)
 
-### Componentes Utilizados:
+O projeto foi montado e testado no simulador online [Wokwi](https://wokwi.com). As imagens abaixo mostram os sensores e botões simulados em ação:
 
-* **ESP32:** Microcontrolador responsável por ler os sensores e controlar o relé da bomba.
-* **DHT22:** Sensor de temperatura e umidade do solo.
-* **LDR (Light Dependent Resistor):** Simula o sensor de pH, com valores analógicos variando conforme a luminosidade.
-* **Botões (2):** Simulam os sensores de Fósforo (P) e Potássio (K), com leituras binárias (pressionado = presente, solto = ausente).
-* **Relé (Simulado por um LED):** Representa a bomba d'água, sendo ligado para irrigar e desligado para interromper.
-* **Botão (Pino 15):** Botão manual para desligar a bomba de irrigação (caso esteja ligada) somente após aviso de alerta de chuva pelo dashboard.
-* **Display OLED:** Exibe localmente as leituras de temperatura, umidade e pH.
 
-### Conexões:
 
-* **DHT22:** Pino de dados conectado ao pino digital 5 do ESP32.
-* **LDR:** Conectado a um divisor de tensão e ao pino analógico 34 do ESP32.
-* **Botão Fósforo (P):** Conectado ao pino digital 2 do ESP32 (configurado com pull-up interno).
-* **Botão Potássio (K):** Conectado ao pino digital 18 do ESP32 (configurado com pull-up interno).
-* **Relé (LED):** Conectado ao pino digital 4 do ESP32.
-* **Botão Desligar Bomba:** Conectado ao pino digital 15 do ESP32 (configurado com pull-up interno).
-* **Display OLED:** Conectado aos pinos I2C do ESP32 (SDA e SCL).
+- LDR é um sensor eletrônico
+- DHT22 é um sensor eletrônico
+- Botões(amarelo e azul) pushbotom
+- Botão(verde) pushbotom
+- Relé simulado por LED vermelho 
+- Display OLED 
+
+---
+
+## Componentes Utilizados
+
+| Componente        | Função                                  |
+|-------------------|------------------------------------------|
+| **ESP32**         | Microcontrolador principal                |
+| **DHT22**         | Sensor de temperatura e umidade           |
+| **LDR**           | Simula leitura de pH                      |
+| **Botões (2)**    | Simulam sensores de Fósforo e Potássio    |
+| **Botão (15)**    | Desligar manualmente a bomba              |
+| **Display OLED**  | Exibe dados locais                        |
+| **Relé (LED)**    | Simula bomba de irrigação                 |
+
+---
+
+## Imagens do Projeto Eletrônico
+
+- Detalhes individuais dos componentes utilizados no circuito simulador wokwi.
+![ComponentesEletronicos](https://github.com/user-attachments/assets/d4cb7f36-a7ce-4803-af37-cd8949f2ffbd)
+
+- Visão geral do projeto montado.
+  
+![CircuitoMontadoSimulador](https://github.com/user-attachments/assets/7d1bc44a-0881-43e7-bbf6-208411a68dbc)
+
+---
+
+## Conexões
+
+| Componente            | Pino do ESP32  |
+|-----------------------|----------------|
+| Sensor DHT22          | Pino 5         |
+| Sensor LDR            | Pino 34 (ADC)  |
+| Botão Fósforo (P)     | Pino 2         |
+| Botão Potássio (K)    | Pino 18        |
+| Botão Desligar Bomba  | Pino 15        |
+| Relé (LED)            | Pino 4         |
+| Display OLED (I2C)    | SDA/SCL        |
+
+---
 
 ## Lógica de Controle da Bomba de Irrigação
 
-A lógica de controle da bomba de irrigação implementada no ESP32 é a seguinte:
+### 1. **Automático (baseado na umidade)**
+- **Se** umidade < 40% → **Liga** a bomba.
+- **Se** umidade >= 40% → **Desliga** a bomba.
 
-1.  **Irrigação Automática (Baseada na Umidade):**
-    * A bomba é ligada (o relé é acionado para HIGH) se a umidade do solo (lida pelo sensor DHT22) for inferior a 40%.
-    * A bomba permanece ligada (simulada pelo led) para a irrigação da cultura.
-    * A bomba é desligada automaticamente caso a umidade do solo for maior ou igual a 40% (o relé é acionado para LOW).
-    
-2.  **Desligamento Manual (Botão no Pino 15):**
-    * Um botão conectado ao pino digital 15 do ESP32 permite o desligamento manual da bomba.
-    * O deligamento ocorre somente quando o dashboard emitir uma mensagem de alerta de chuva.
-    * O botão é pressionado manualmente (nível LOW, devido à configuração pull-up) em qualquer momento, a bomba é desligada imediatamente, interrompendo a irrigação automática, caso esteja em andamento.
-    * Esse desligamento da bomba tem como objetivo de economizar água em casos de chuva.
+### 2. **Manual (previsão de chuva)**
+- **Se** o botão do pino 15 for pressionado → **Desliga** a bomba manualmente.
+- Esse botão é usado quando o dashboard detecta **chuva futura**.
 
-3.  **Estado da Bomba:**
-    * Uma variável booleana (`bombaLigada`) rastreia o estado atual da bomba (ligada ou desligada).
-    * O status da bomba (`on` ou `off`) é enviado para o servidor Python via HTTP.
+### 3. **Status**
+- A bomba é representada por um **LED vermelho**.
+- O estado da bomba é enviado ao servidor Python (`on` ou `off`).
+
+---
 
 ## Código C/C++
 
-O código C/C++ para o ESP32 lê os dados dos sensores, implementa a lógica de controle da bomba e envia os dados para o servidor Python. Os valores dos sensores também são exibidos localmente no display OLED. (O código completo está no arquivo `programa_esp32` na pasta src da entrega_1 do projeto).
+O código responsável pela leitura dos sensores, lógica de irrigação e comunicação com o servidor está disponível na pasta:
 
+  [Código do ESP32 – programa_esp32.ino](./src/programa_esp32.ino)
 
+- Os valores dos sensores são exibidos localmente no **display OLED**.
+- Dados são enviados via `HTTP GET` para o servidor Flask.
+- Todas as leituras são visíveis no **Serial Monitor**.
+
+---
+
+> Caso deseje ver a visualização dos dados e integração com banco/API, acesse as outras entregas na pasta raiz do projeto.
