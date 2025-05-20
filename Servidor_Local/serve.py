@@ -5,9 +5,9 @@ from datetime import datetime
 app = Flask(__name__)
 
 # *** Configurações do Banco de Dados Oracle ***
-DB_USER = "system"  # Substitua pelo seu nome de usuário Oracle
-DB_PASSWORD = "system"  # Substitua pela sua senha Oracle
-DB_DSN = "localhost:1521/xe"  # Substitua pela sua string de conexão DSN
+DB_USER = "rm563348"  # Substitua pelo seu nome de usuário Oracle
+DB_PASSWORD = "220982"  # Substitua pela sua senha Oracle
+DB_DSN = "oracle.fiap.com.br:1521/ORCL"  # Substitua pela sua string de conexão DSN
 
 def conectar_db():
     """Conecta ao banco de dados Oracle."""
@@ -49,7 +49,7 @@ def criar_tabela():
                 cursor.close()
                 conn.close()
 
-criar_tabela()
+#criar_tabela()
 
 def inserir_dados(umidade, temperatura, ph, fosforo, potassio, bomba_dagua):
     """Insere uma nova leitura de dados na tabela 'leituras_sensores' do Oracle."""

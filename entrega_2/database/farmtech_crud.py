@@ -5,16 +5,13 @@ e integra com a simulação de um dispositivo ESP32 executando no Wokwi.
 
 """
 
-import cx_Oracle
+import oracledb
 import datetime
 import sys
 from http.server import BaseHTTPRequestHandler, HTTPServer
 import urllib.parse
 from threading import Thread
 from config import DB_CONFIG, SERVER_CONFIG
-
-
-
 
 
 # Variáveis globais para conexão e servidor
@@ -24,17 +21,16 @@ server = None
 # -------------------- CONEXÃO COM BANCO DE DADOS --------------------
 
 def connect_to_db():
-    """Estabelece conexão com o banco de dados Oracle usando configurações do config.py"""
     global connection
     try:
-        connection = cx_Oracle.connect(
-            DB_CONFIG["user"], 
-            DB_CONFIG["password"], 
-            DB_CONFIG["dsn"]
+        connection = oracledb.connect(
+            user=DB_CONFIG["user"],
+            password=DB_CONFIG["password"],
+            dsn=DB_CONFIG["dsn"]
         )
         print("Conectado ao banco de dados Oracle com sucesso")
         return connection
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao conectar ao banco de dados Oracle: {error}")
         return None
 
@@ -134,7 +130,7 @@ def save_sensor_data(temperatura, umidade, ph, fosforo, potassio, rele):
         connection.commit()
         print("Dados dos sensores salvos com sucesso no banco de dados")
         
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao salvar dados dos sensores: {error}")
 
 # -------------------- INICIALIZAÇÃO DO SERVIDOR --------------------
@@ -190,7 +186,7 @@ def create_cultura():
         )
         connection.commit()
         print(f"Cultura cadastrada com sucesso! ID: {id_cultura}")
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao cadastrar cultura: {error}")
 
 def read_cultura():
@@ -212,7 +208,7 @@ def read_cultura():
         for row in rows:
             print(f"{row[0]:<5} {row[1]:<30} {row[2]:<6} {row[3]:<10}")
             
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao listar culturas: {error}")
 
 def update_cultura():
@@ -268,7 +264,7 @@ def update_cultura():
         connection.commit()
         print(f"Cultura atualizada com sucesso!")
         
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao atualizar cultura: {error}")
 
 def delete_cultura():
@@ -306,7 +302,7 @@ def delete_cultura():
         connection.commit()
         print(f"Cultura excluída com sucesso!")
         
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao excluir cultura: {error}")
 
 # -------------------- OPERAÇÕES CRUD: SENSOR --------------------
@@ -369,7 +365,7 @@ def create_sensor():
         connection.commit()
         print(f"Sensor cadastrado com sucesso! ID: {id_sensor}")
         
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao cadastrar sensor: {error}")
 
 def read_sensor():
@@ -396,7 +392,7 @@ def read_sensor():
         for row in rows:
             print(f"{row[0]:<5} {row[1]:<20} {row[2]:<6} {row[3]:<10} {row[4]:<30}")
             
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao listar sensores: {error}")
 
 def update_sensor():
@@ -480,7 +476,7 @@ def update_sensor():
         connection.commit()
         print(f"Sensor atualizado com sucesso!")
         
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao atualizar sensor: {error}")
 
 def delete_sensor():
@@ -528,7 +524,7 @@ def delete_sensor():
         connection.commit()
         print(f"Sensor excluído com sucesso!")
         
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao excluir sensor: {error}")
 
 # -------------------- OPERAÇÕES CRUD: MONITORAMENTO --------------------
@@ -563,7 +559,7 @@ def list_recent_monitoramentos():
         for row in rows:
             print(f"{row[0]:<6} {row[1]:<10} {row[2]:<15} {row[3]:<8.2f} {row[4]:<8} {row[5]:<20} {row[6]:<20}")
             
-    except cx_Oracle.Error as error:
+    except oracledb.Error as error:
         print(f"Erro ao listar monitoramentos: {error}")
 
 # -------------------- MENU PRINCIPAL --------------------
